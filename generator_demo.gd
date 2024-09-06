@@ -21,16 +21,17 @@ func _fill_buffer():
 	while to_fill > (playbacks_active - 1): # or > 0  or > 2 if 3 frames go at once bc 3 sounds
 		#if sound_1_active:
 		# sine
-		playback.push_frame(Vector2.ONE * sin(phase_1 * TAU)) # Audio frames are stereo.
+		#playback.push_frame(Vector2.ONE * sin(phase_1 * TAU)) # Audio frames are stereo.
 		phase_1 = fmod(phase_1 + increment_1, 1.0)
 		# square
-		playback.push_frame(Vector2.ONE * sign(sin(phase_2 * TAU)))
+		#playback.push_frame(Vector2.ONE * sign(sin(phase_2 * TAU)))
 		#playback.push_frame(Vector2.ONE * sin(phase_2 * TAU))
 		phase_2 = fmod(phase_2 + increment_2, 1.0)
 		# triangle
 		#playback.push_frame(Vector2.ONE * 2 * abs(phase - floor(phase + 0.5)))
 		# sawtooth
-		playback.push_frame(Vector2.ONE * phase_3)
+		var total_phase = sin(phase_1 * TAU) + sign(sin(phase_2 * TAU)) + phase_3
+		playback.push_frame(Vector2.ONE * total_phase)
 		#playback.push_frame(Vector2.ONE * sin(phase_3 * TAU))
 		phase_3 = fmod(phase_3 + increment_3, 1.0)
 		
