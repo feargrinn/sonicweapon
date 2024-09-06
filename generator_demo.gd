@@ -7,33 +7,32 @@ var pulse_hz_2 = 440.0
 var pulse_hz_3 = 440.0
 var phase_1 = 0.0
 var phase_2 = 0.0
-var phase_3 = 0.0
+#var phase_3 = 0.0
 
 var playback: AudioStreamPlayback = null # Actual playback stream, assigned in _ready().
 
 func _fill_buffer():
 	var playbacks_active = 3
 	var increment_1 = pulse_hz_1 / sample_hz
-	var increment_2 = pulse_hz_2 / sample_hz
-	var increment_3 = pulse_hz_3 / sample_hz
+	var increment_2 = pulse_hz_2 / 30 / sample_hz
+	#var increment_3 = pulse_hz_3 / sample_hz
 
 	var to_fill = playback.get_frames_available()
 	while to_fill > (playbacks_active - 1): # or > 0  or > 2 if 3 frames go at once bc 3 sounds
+		phase_2 = fmod(phase_2 + increment_2, 1.0)
 		#if sound_1_active:
 		# sine
 		#playback.push_frame(Vector2.ONE * sin(phase_1 * TAU)) # Audio frames are stereo.
-		phase_1 = fmod(phase_1 + increment_1, 1.0)
+		phase_1 = fmod(phase_1 + increment_1 * (1 + pulse_hz_3 / 1000 * sin(phase_2 * TAU)), 1.0)
 		# square
-		#playback.push_frame(Vector2.ONE * sign(sin(phase_2 * TAU)))
+		playback.push_frame(Vector2.ONE * sin(phase_1 * TAU))
 		#playback.push_frame(Vector2.ONE * sin(phase_2 * TAU))
-		phase_2 = fmod(phase_2 + increment_2, 1.0)
 		# triangle
 		#playback.push_frame(Vector2.ONE * 2 * abs(phase - floor(phase + 0.5)))
 		# sawtooth
-		var total_phase = sin(phase_1 * TAU) + sign(sin(phase_2 * TAU)) + phase_3
-		playback.push_frame(Vector2.ONE * total_phase)
+		#playback.push_frame(Vector2.ONE * phase_3)
 		#playback.push_frame(Vector2.ONE * sin(phase_3 * TAU))
-		phase_3 = fmod(phase_3 + increment_3, 1.0)
+		#phase_3 = fmod(phase_3 + increment_3, 1.0)
 		
 		to_fill -= playbacks_active # 0 or -= 3 bc 3 sounds played in every frame
 
